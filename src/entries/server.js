@@ -55,7 +55,7 @@ createBot({token: process.env.SLACK_TOKEN}).then(bot => {
 
     run();
     if (process.env.NODE_ENV === 'production') {
-        setInterval(run, 12000);
+        setInterval(run, 120000);
     } else {
         setTimeout(() => console.log('finished'), 10000000);
     }
