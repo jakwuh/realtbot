@@ -20,5 +20,5 @@ npm test
 ## Запуск
 
 ```javascript
-SLACK_TOKEN=<your-bots-slack-token-here> npm run start:production
+SLACK_TOKEN=<slack-bot-token-here> npm run start:production
 ```
