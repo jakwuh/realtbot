@@ -13,7 +13,6 @@ npm i
 ## Тестирование
 
 ```javascript
-cd realtbot/
 npm test
 ```
 
@@ -21,6 +20,5 @@ npm test
 ## Запуск
 
 ```javascript
-cd realtbot/
 SLACK_TOKEN=<your-bots-slack-token-here> npm run start:production
 ```
