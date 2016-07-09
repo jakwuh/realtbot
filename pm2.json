@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "WBP",
+      "script": "webpack",
+      "args": "--watch",
+      "watch": ["./webpack.config.js"]
+    }, {
+      "name": "SRV",
+      "script": "./dist/main.js",
+      "watch": ["./dist"]
+    }
+  ]
+}
