@@ -10,6 +10,14 @@ cd realtbot/
 npm i
 ```
 
+## Тестирование
+
+```javascript
+cd realtbot/
+npm test
+```
+
+
 ## Запуск
 
 ```javascript
