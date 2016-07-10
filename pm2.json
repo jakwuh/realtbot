@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "WBP",
-      "script": "webpack",
+      "script": "./node_modules/.bin/webpack",
       "args": "--watch",
       "watch": ["./webpack.config.js"]
     }, {
