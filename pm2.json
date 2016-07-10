@@ -1,12 +1,12 @@
 {
   "apps": [
     {
-      "name": "WBP",
+      "name": "WBP-realtbot",
       "script": "./node_modules/.bin/webpack",
       "args": "--watch",
       "watch": ["./webpack.config.js"]
     }, {
-      "name": "SRV",
+      "name": "SRV-realtbot",
       "script": "./dist/main.js",
       "watch": ["./dist"]
     }
