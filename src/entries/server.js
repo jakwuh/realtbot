@@ -25,6 +25,8 @@ const onliner = new Onliner({
 
 createBot({token: process.env.SLACK_TOKEN}).then(bot => {
 
+    logger.log('Bot is running');
+
     function run() {
         co(onliner.fetchAll())
             .then(flats => {

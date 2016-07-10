@@ -6,10 +6,10 @@
   "scripts": {
     "start": "npm run start:development",
     "stop": "npm run stop:development",
-    "start:development": "npm run build && NODE_ENV=development pm2 restart pm2.json && pm2 logs",
-    "stop:development": "pm2 kill",
-    "start:production": "npm run build && NODE_ENV=production pm2 restart pm2.json",
-    "stop:production": "pm2 kill",
+    "start:development": "npm run build && NODE_ENV=development pm2 start pm2.json && pm2 logs",
+    "stop:development": "pm2 delete pm2.json",
+    "start:production": "npm run build && NODE_ENV=production pm2 start pm2.json",
+    "stop:production": "pm2 delete pm2.json",
     "test": "webpack --config webpack.spec.config.js && mocha dist/spec/main.js",
     "build": "webpack"
   },
@@ -21,7 +21,6 @@
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-0": "^6.5.0",
-    "babel-preset-stage-2": "^6.11.0",
     "backbone": "^1.3.3",
     "botkit": "^0.2.2",
     "chai": "^3.5.0",
