@@ -89,7 +89,7 @@ export default class Onliner {
         const regexString = `\((https\:\/\/content\.onliner\.by\/apartment\_rentals\/[^\)\"\]*)\)`;
         const imagesRegex = new RegExp(regexString, 'g');
         const url = `https://r.onliner.by/ak/apartments/${id}`;
-        return rp(url).then(page => this.unifyImages(page.toString().match(imagesRegex)));
+        return rp(url).then(page => this.unifyImages(page.toString().match(imagesRegex) || []));
     }
 
     /**
