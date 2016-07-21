@@ -25,14 +25,8 @@ export default class Onliner extends Provider {
         return {
             rent_type: confine.getAllowedBedrooms().map(this.getRentType),
             bounds: {
-                lb: {
-                    lat: 53.88269035388989,
-                    long: 27.50448703765869
-                },
-                rt: {
-                    lat: 53.89586751305278,
-                    long: 27.53195285797119
-                }
+                lb: {lat: 53.85698167774636, lon: 27.44281768798828},
+                rt: {lat: 53.947398072373566, lon: 27.66254425048828}
             }
         }
     }
