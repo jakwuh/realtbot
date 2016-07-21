@@ -1,0 +1,17 @@
+{
+  "id": 136510,
+  "price": {
+    "amount": "200.00",
+    "currency": "USD"
+  },
+  "rent_type": "2_rooms",
+  "location": {
+    "address": "Минск, улица Розы Люксембург, 142",
+    "latitude": 53.889904,
+    "longitude": 27.510166
+  },
+  "contact": {
+    "owner": true
+  },
+  "url": "https://r.onliner.by/ak/apartments/136510"
+}

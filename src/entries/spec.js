@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import 'babel-polyfill';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

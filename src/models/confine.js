@@ -1,10 +1,18 @@
 import {Model} from 'backbone';
+import Location from './location';
+import config from '../configs/confine.json';
 
 export default class Confine extends Model {
 
+    constructor({locations = [], ...rest} = config) {
+        super(rest);
+        this.locations = locations.map(config => new Location(config));
+    }
+
     defaults() {
         return {
-            bedrooms: []
+            bedrooms: [],
+            locations: []
         };
     }
 
@@ -16,24 +24,22 @@ export default class Confine extends Model {
     }
 
     /**
-     * @returns {number}
+     * @param {Flat} flat
+     * @returns {boolean}
      */
-    getCenterLat() {
-        return this.get('center_lat');
+    test(flat) {
+        if (!this.locations.length) {
+            return true;
+        }
+        return Boolean(this.findLocation(flat));
     }
 
     /**
-     * @returns {number}
+     * @param {Flat} flat
+     * @returns {*}
      */
-    getCenterLon() {
-        return this.get('center_lon');
-    }
-
-    /**
-     * @returns {number}
-     */
-    getAllowedRadius() {
-        return this.get('allowed_radius');
+    findLocation(flat) {
+        return this.locations.find(l => l.test(flat));
     }
 
 }

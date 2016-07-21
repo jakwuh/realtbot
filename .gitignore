@@ -1,6 +1,4 @@
 .idea
 node_modules
-npm-debug.log
-realt.data
-realt.json
-dist
+/data
+/dist

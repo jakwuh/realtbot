@@ -3,15 +3,15 @@ import {Model} from 'backbone';
 export default class Flat extends Model {
 
     /**
-     * @param {number} options.price
-     * @param {number} options.bedrooms
-     * @param {string} options.currency
-     * @param {string} options.advertiser
-     * @param {string} options.url
-     * @param {number} options.lat
-     * @param {number} options.lon
-     * @param {string} options.address
-     * @param {string[]} options.images
+     * @param {number} [options.price]
+     * @param {number} [options.bedrooms]
+     * @param {string} [options.currency]
+     * @param {boolean} [options.is_agency]
+     * @param {string} [options.url]
+     * @param {number} [options.lat]
+     * @param {number} [options.lon]
+     * @param {string} [options.address]
+     * @param {string[]} [options.images]
      */
     constructor(options) {
         super(options);
@@ -67,6 +67,16 @@ export default class Flat extends Model {
     }
 
     /**
+     * @returns {{lat: number, lon: number}}
+     */
+    getLocation() {
+        return {
+            lat: this.getLat(),
+            lon: this.getLon()
+        };
+    }
+
+    /**
      * @returns {number}
      */
     getBedrooms() {
@@ -74,10 +84,10 @@ export default class Flat extends Model {
     }
 
     /**
-     * @returns {string}
+     * @returns {boolean}
      */
-    getAdvertiser() {
-        return this.get('advertiser');
+    isAgency() {
+        return this.get('is_agency');
     }
 
     /**

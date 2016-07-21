@@ -1,0 +1,7 @@
+{
+  "apps": [{
+      "name": "realtbot",
+      "script": "./dist/main.js",
+      "watch": ["./dist"]
+    }]
+}

@@ -1,8 +1,9 @@
 import {expect} from 'chai';
-import Onliner from '../providers/onliner';
+import Onliner from './onliner';
 import Confine from '../models/confine';
-import Logger from '../libs/logger';
+import Logger from '../libs/Log/logger';
 import Flat from '../models/flat';
+import onlinerFixture from './fixtures/onliner.json';
 import co from 'co';
 
 describe('Onliner', function () {
@@ -15,11 +16,6 @@ describe('Onliner', function () {
         onliner = new Onliner({confine, logger});
     });
 
-    it('should correctly construct', function () {
-        expect(onliner.getLogger()).to.equal(logger);
-        expect(onliner.getConfine()).to.equal(confine);
-    });
-
     it('should correctly return rent_type', function () {
         expect(onliner.getRentType(1)).to.equal('1_room');
         expect(onliner.getRentType(2)).to.equal('2_rooms');
@@ -27,62 +23,40 @@ describe('Onliner', function () {
     });
 
     it('should correctly generate params', function () {
-        expect(onliner.generateParams()).to.have.property('rent_type')
+        expect(onliner.generateParams())
+            .to.have.property('rent_type')
             .that.is.an('array')
             .that.deep.equals(['1_room', '2_rooms']);
     });
 
     it('should correctly unify images', function () {
         const images = [
-            'https://test.xyx/sdsa/40x40/id1.jpeg',
-            'https://test.xyx/sdsa/80x80/id1.jpeg',
-            'https://test.xyx/sdsa/70x70/id1.jpeg'
+            'https://t.x/k/4x4/id1.png',
+            'https://t.x/k/8x8/id1.png',
+            'https://t.x/k/7x7/id1.png'
         ];
-        expect(onliner.unifyImages(images))
-            .to.deep.equal(['https://test.xyx/sdsa/80x80/id1.jpeg']);
+        expect(onliner.unifyImages(images)).to.deep.equal(['https://t.x/k/8x8/id1.png']);
     });
 
     it('should correctly fetch all flats', function () {
-        onliner.fetchFlatImages = id => {
-            return Promise.resolve(['1']);
-        };
-        onliner.fetchFlatsPage = page => {
-            if (page > 1) {
-                return [];
-            }
-            return Promise.resolve([{
-                id: 136510,
-                price: {amount: '200.00', currency: 'USD'},
-                rent_type: '2_rooms',
-                location: {
-                    address: 'Минск, улица Розы Люксембург, 142',
-                    latitude: 53.889904,
-                    longitude: 27.510166
-                },
-                contact: {owner: true},
-                url: 'https://r.onliner.by/ak/apartments/136510'
-            }]);
-        };
+        onliner.fetchFlatsPage = page => Promise.resolve(page > 1 ? [] : [onlinerFixture]);
         return co(onliner.fetchAll()).then(([flat]) => {
-            expect(flat.getAmount()).to.be.equal(200);
-            expect(flat.getBedrooms()).to.be.equal(2);
-            expect(flat.getLat()).to.be.equal(53.889904);
-            expect(flat.getLon()).to.be.equal(27.510166);
-            expect(flat.getCurrency()).to.be.equal('USD');
-            expect(flat.getAdvertiser()).to.be.equal('owner');
-            expect(flat.getUrl()).to.be.equal('https://r.onliner.by/ak/apartments/136510');
-            expect(flat.getAddress()).to.be.equal('Минск, улица Розы Люксембург, 142');
+            expect(flat.getAmount()).to.be.equal(parseFloat(onlinerFixture.price.amount));
+            expect(flat.getBedrooms()).to.be.equal(parseFloat(onlinerFixture.rent_type));
+            expect(flat.getLat()).to.be.equal(parseFloat(onlinerFixture.location.latitude));
+            expect(flat.getLon()).to.be.equal(parseFloat(onlinerFixture.location.longitude));
+            expect(flat.getCurrency()).to.be.equal(onlinerFixture.price.currency.toUpperCase());
+            expect(flat.isAgency()).to.be.equal(false);
+            expect(flat.getUrl()).to.be.equal(onlinerFixture.url);
+            expect(flat.getAddress()).to.be.equal(onlinerFixture.location.address);
         });
     });
 
-    it('should correctly fetch oner flat', function () {
-        onliner.fetchFlatImages = id => {
-            return Promise.resolve(['1']);
-        };
+    it('should correctly fetch one flat', function () {
+        onliner.fetchFlatImages = id => Promise.resolve(['https://image.url']);
         return co(onliner.fetchOne(new Flat({id: 1}))).then(flat => {
-            expect(flat.getImages()).to.be.deep.equal(['1']);
+            expect(flat.getImages()).to.be.deep.equal(['https://image.url']);
         });
-    
     });
 
 });

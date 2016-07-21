@@ -1,3 +1,7 @@
 {
-  "dbpath": "./data/realt.json"
+  "dbpath": "./data/realt.json",
+  "botkit": {
+    "debug": true,
+    "logLevel": 5
+  }
 }

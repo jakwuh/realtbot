@@ -21,7 +21,8 @@ describe('Messenger', function () {
             lat: 1,
             lon: 2,
             address: 'addr',
-            images: ['http://image']
+            images: ['http://image'],
+            is_agency: true
         });
 
         const lines = [

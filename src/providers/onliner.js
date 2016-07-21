@@ -1,53 +1,9 @@
 import rp from 'request-promise';
 import {extend, find, filter, uniq} from 'lodash';
-import {writeFileSync, readFileSync} from 'fs';
 import Flat from '../models/flat';
+import Provider from './provider';
 
-export default class Onliner {
-
-    /**
-     * @param {Logger} logger
-     * @param {Confine} confine
-     */
-    constructor({logger, confine}) {
-        this.setLogger(logger);
-        this.setConfine(confine);
-    }
-
-    /**
-     * @param {Logger} logger
-     */
-    setLogger(logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * @returns {Logger}
-     */
-    getLogger() {
-        return this.logger;
-    }
-
-    /**
-     * @param {Confine} confine
-     */
-    setConfine(confine) {
-        this.confine = confine;
-    }
-
-    /**
-     * @returns {Confine}
-     */
-    getConfine() {
-        return this.confine;
-    }
-
-    /**
-     * @param {string} message
-     */
-    debug(message) {
-        this.getLogger().debug(message);
-    }
+export default class Onliner extends Provider {
 
     /**
      * @param {number} rooms
@@ -65,8 +21,9 @@ export default class Onliner {
      * @returns {{}}
      */
     generateParams() {
+        const confine = this.getConfine();
         return {
-            rent_type: this.getConfine().getAllowedBedrooms().map(this.getRentType),
+            rent_type: confine.getAllowedBedrooms().map(this.getRentType),
             bounds: {
                 lb: {
                     lat: 53.88269035388989,
@@ -85,11 +42,17 @@ export default class Onliner {
      * @returns {string[]}
      */
     fetchFlatImages(id) {
-        this.debug(`Fetching images for flat ${id}`);
+        this.log(`Fetching images for flat ${id}`);
         const regexString = `\((https\:\/\/content\.onliner\.by\/apartment\_rentals\/[^\)\"\]*)\)`;
         const imagesRegex = new RegExp(regexString, 'g');
         const url = `https://r.onliner.by/ak/apartments/${id}`;
-        return rp(url).then(page => this.unifyImages(page.toString().match(imagesRegex) || []));
+        return rp(url)
+            .then(page => this.unifyImages(page.toString().match(imagesRegex) || []))
+            .then(images => {
+                this.log(`Fetched ${images.length} image(s) for flat ${id}`);
+                this.debug('Fetched images: ' + images.join(', '));
+                return images;
+            });
     }
 
     /**
@@ -110,7 +73,7 @@ export default class Onliner {
 
     /**
      * @param {number} page
-     * @returns {Promise<{}[]>}
+     * @returns {Promise.<{}[]>}
      */
     fetchFlatsPage(page) {
         const options = {
@@ -119,39 +82,51 @@ export default class Onliner {
             uri: 'https://ak.api.onliner.by/search/apartments'
         };
         this.debug(`Fetching flats on page ${page}`);
-        return rp(options).then(response => response.apartments);
+        return rp(options).then(({apartments}) => {
+            this.log(`Fetched ${apartments.length} flats on page ${page}`);
+            this.debug('Fetched apartments: ' + apartments.map(data => JSON.stringify(data)).join('\n'));
+            return apartments;
+        });
     }
 
     /**
-     * @yields {{}[]}
+     * @returns {Flat[]}
      */
     *fetchAll() {
         const flats = [];
         let results;
         let page = 0;
+        this.log('Fetching all flats');
         do {
             results = yield this.fetchFlatsPage(++page);
-            this.debug(`Fetched ${results.length} flats from page ${page}`);
 
             for (const flat of results) {
                 flats.push(new Flat({
                     id: flat.id,
-                    amount: Number(flat.price.amount),
+                    amount: parseFloat(flat.price.amount),
                     currency: flat.price.currency,
-                    bedrooms: Number(flat.rent_type.slice(0, 1)),
-                    advertiser: flat.contact.owner ? 'owner' : 'agent',
+                    bedrooms: parseFloat(flat.rent_type),
+                    is_agency: !flat.contact.owner,
                     url: flat.url,
-                    lat: flat.location.latitude,
-                    lon: flat.location.longitude,
+                    lat: parseFloat(flat.location.latitude),
+                    lon: parseFloat(flat.location.longitude),
                     address: flat.location.address
                 }));
             }
         } while (results.length);
-        return flats;
+        this.log('Fetched all flats');
+        const confine = this.getConfine();
+        return flats.filter(f => confine.test(f));
     }
 
+    /**
+     * @param {Flat} flat
+     * @returns {Flat}
+     */
     *fetchOne(flat) {
+        this.log(`Fetching precise information for flat ${flat.id}`);
         flat.setImages(yield this.fetchFlatImages(flat.id));
+        this.log(`Fetched precise information for flat ${flat.id}`);
         return flat;
     }
 
