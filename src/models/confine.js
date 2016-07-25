@@ -28,6 +28,11 @@ export default class Confine extends Model {
      * @returns {boolean}
      */
     test(flat) {
+        const currency = flat.getCurrency();
+        const amount = flat.getAmount();
+        if (currency.toLowerCase() == 'usd' && (amount < 400 || amount > 800)) {
+            return false;
+        }
         if (!this.locations.length) {
             return true;
         }
