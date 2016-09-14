@@ -5,7 +5,7 @@
 ## Установка
 
 ```javascript
-git clone https://github.com/akwuh/realtbot/
+git clone https://github.com/jakwuh/realtbot/
 cd realtbot/
 npm i
 ```
